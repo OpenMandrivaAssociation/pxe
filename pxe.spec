@@ -1,6 +1,6 @@
 %define name    pxe 
 %define version 1.4.2
-%define release %mkrel 12
+%define release %mkrel 13
 
 %define tftpbase /var/lib/tftpboot
 
