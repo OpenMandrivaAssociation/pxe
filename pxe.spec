@@ -1,6 +1,6 @@
 %define name    pxe 
 %define version 1.4.2
-%define release %mkrel 13
+%define release %mkrel 14
 
 %define tftpbase /var/lib/tftpboot
 
@@ -31,6 +31,7 @@ Source13:	elilo.conf
 Patch0:		pxe-1.4.patch
 Patch3:		pxe-autoconf.patch
 Patch4:		pxe-mtftp.patch
+Patch5:		pxe-1.4.2-arch_id.patch
 Patch7:		pxe-segfault_on_exit.patch
 
 %package	bootstraps
@@ -67,6 +68,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %patch2 -p0
 %patch3 -p0
 %patch4 -p0
+%patch5 -p1 -b .arch_id
 %patch7 -p0
 
 %build
