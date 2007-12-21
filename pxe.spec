@@ -13,6 +13,7 @@ License:        GPL
 URL: 		http://www.kano.org.uk/projects/pxe
 Requires:       chkconfig, dhcp-server, coreutils, grep, tftp-server, pxelinux
 Provides:	pxeserver
+BuildRoot:      %{_tmppath}/%{name}-%{version}
 Requires(post): rpm-helper
 Requires(preun): rpm-helper
 
