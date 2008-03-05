@@ -1,6 +1,5 @@
 %define name    pxe 
 %define version 1.4.2
-%define release %mkrel 14
 
 %define tftpbase /var/lib/tftpboot
 
@@ -8,7 +7,7 @@ Name:           %{name}
 Summary:        A Linux PXE (Preboot eXecution Environment) package
 Group:          System/Servers
 Version:        %{version}
-Release:        %{release}
+Release:        %mkrel 15
 License:        GPL
 URL: 		http://www.kano.org.uk/projects/pxe
 Requires:       chkconfig, dhcp-server, coreutils, grep, tftp-server, pxelinux
