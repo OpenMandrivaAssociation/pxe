@@ -57,7 +57,7 @@ Linux PXE server.
 
 
 %prep 
-rm -rf ${RPM_BUILD_ROOT}
+rm -rf %{buildroot}
 %setup -q -n %{name}-%{version}
 %setup -q -T -D -a 5
 %setup -q -T -D -a 6
@@ -96,7 +96,7 @@ install -m644 %{SOURCE13} %{buildroot}%{tftpbase}/IA64PC/linux/linux.1
 #install -m644 %{SOURCE14} %{buildroot}%{tftpbase}/X86PC/linux/help.txt
 
 %clean
-rm -rf ${RPM_BUILD_ROOT}
+rm -rf %{buildroot}
 
 %post 
 %_post_service pxe
