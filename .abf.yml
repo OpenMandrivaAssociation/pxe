@@ -1,0 +1,12 @@
+sources:
+  "dhcpd.conf.pxe:"	08a8a377593c34f71f3639fd57ad358c58abbb5c
+  "elilo.conf:"	23840e390b51b9562c02649b68baadde510aa4e8
+  "elilo.efi:"	64075e2498e1774bf4a0b63f560d8b3680e04567
+  "elilo.txt:"	3feb339d47ad84aeea6e3eb2cd5889734e0b1bd5
+  "elilovars.txt:"	2050f0a89759013d392054b587e2b6d4f1cd774b
+  "grubNBI.tar.bz2:"	60c2b01a6dd14a9d5a6d6556d04f05505363f0e4
+  "pxe:"	00f0398699c28dfe6bdb43e6fcd021001a5e1112
+  "pxe-1.4.2.tar.gz:"	b2e53e97eeb01fe8d4e9978016f6a9d7872e869d
+  "pxe.conf:"	58c3031eda67f8fa3dac562857cbd9c3e9e494c5
+  "pxedoc.tar.bz2:"	a7a7c10757d2925a73ec3409ace2ca57e4545a85
+  "pxe-linux.tar.bz2:"	b1c21d89c37fc5593346ae7cbd9e4978209f7c0f

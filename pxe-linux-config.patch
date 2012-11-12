@@ -1,0 +1,41 @@
+--- pxe-linux/nbp.linux/Makefile.djb	Thu Sep 23 20:58:21 1999
++++ pxe-linux/nbp.linux/Makefile	Sat Sep 25 00:32:05 1999
+@@ -9,8 +9,8 @@
+ AS=as86
+ LD=ld86
+ 
+-LIBPATH=/usr/bcc/lib/bcc/i86/
+-TFTPPATH=/tftpboot/X86PC/UNDI/
++LIBPATH=/usr/lib/bcc/i86/
++TFTPPATH=/var/lib/tftpboot/X86PC/UNDI/
+ 
+ CCFLAGS=-ansi -i- -1
+ ASFLAGS=-1 -u
+@@ -45,8 +45,10 @@
+  pxe_cmn.h pxeid.h tftp_api.h udp_api.h undi_api.h Makefile
+ 
+ install: bstrap.0 linux.0
++	mkdir -p $(TFTPPATH)BStrap
++	mkdir -p $(TFTPPATH)linux-install
+ 	cp -f bstrap.0 $(TFTPPATH)BStrap/bstrap.0
+-	cp -f linux.0 $(TFTPPATH)linux/linux.0
++	cp -f linux.0 $(TFTPPATH)linux-install/linux.0
+ 
+ uninstall:
+ 	rm -f $(TFTPPATH)BStrap/bstrap.0
+--- pxe-linux/server/makefile.djb	Thu Sep 23 20:58:54 1999
++++ pxe-linux/server/makefile	Sat Sep 25 00:31:09 1999
+@@ -16,9 +16,10 @@
+ 	{ cd services/pxeclienttester ; make install }
+ 	{ cd services/pxeparser ; make install }
+ 	mkdir -p $(PREFIX)/tftpboot/X86PC/UNDI/BStrap
+-	mkdir -p $(PREFIX)/tftpboot/X86PC/UNDI/redhat-install
+-	cp bstrap.0 /tftpboot/X86PC/UNDI/BStrap
+-	cp linux.0 /tftpboot/X86PC/UNDI/redhat-install
++	mkdir -p /var/lib/tftpboot/X86PC/UNDI/linux-install
++	# we don't need this; we build our own.
++	# cp bstrap.0 /tftpboot/X86PC/UNDI/BStrap
++	# cp linux.0 /tftpboot/X86PC/UNDI/linux-install
+ 
+ clean:
+ 	{ cd classes ; make clean }

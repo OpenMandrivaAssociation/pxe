@@ -1,0 +1,141 @@
+--- pxe-linux/nbp.linux/linux.c	Thu Sep 23 17:58:21 1999
++++ pxe-linux/nbp.linux/linux.c	Tue Dec 21 14:36:04 1999
+@@ -42,6 +42,41 @@
+ 		;
+ }
+ 
++int
++do_timeout(int seconds)
++{
++	long lasttick;
++	int ticks;
++	int key;
++
++	for (;;) {
++		bputc('(');
++		if (seconds > 99)
++			bputh1(seconds / 100);
++		if (seconds > 9)
++			bputh1((seconds / 10) % 10);
++		bputh1(seconds % 10);
++		bputc(')');
++		bputc(' ');
++
++		for (ticks = 18; ticks--; ) {
++			for (lasttick = tickcount(); lasttick == tickcount(); ) {
++				if (kbhit()) {
++					key = bgetc();
++					return 1;
++				}
++			}
++		}
++
++		bputs(&"\b\b\b\b\b\b"[(seconds < 10) + (seconds < 100)]);
++
++		if (!seconds--) {
++			cll();
++			return 0;
++		}
++	}
++}
++
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+ /* unsigned nbpentry(pxeptr, pxenvptr)
+  *	C entry point for PXE bootstrap programs.
+@@ -62,6 +97,12 @@
+ 	t_IP sip;
+ 	int type;
+ 	int layer;
++	char cmdline[255];
++	char * chptr = cmdline;
++	int key;
++	int where;
++
++	cmdline[0] = '\0';
+ 
+ 	bputs("\nIntel Linux NBP, Beta-3 (build 003)\n\n");
+ 
+@@ -98,6 +139,38 @@
+ 		return PXENV_STATUS_FAILURE;
+ 	}
+ 
++	bputs("Press any key to enter kernel parameters... ");
++	if (do_timeout(5) == 1) {
++		bputc('\n');
++		bputs("Enter kernel parameters: ");
++		where = getcol();
++		for (key = bgetc(); key != 0x1C0D; key = bgetc()) {
++			switch (key) {
++				case 0x0E08:	/* Backspace */
++					if (chptr == cmdline) break;
++					chptr--;
++					gotorc(getrow(), 
++						chptr - cmdline + where);
++					bputc(' ');
++					gotorc(getrow(), 
++						chptr - cmdline + where);
++					break;
++
++				default:
++					*chptr++ = key & 0xFF;
++					bputc(key & 0xFF);
++					break;
++			}
++		}
++		*chptr = '\0';
++		bputc('\n');
++	}
++	else
++	{
++ 	  strncpy(cmdline,"ks console=ttyS0,115200",23);
++	}
++	bputc('\n');
++
+ 	/*
+ 	 * Initialize default gateway for UDP and TFTP API calls.
+ 	 */
+@@ -264,7 +337,7 @@
+ 	 * Initialize boot sector and setup parameters
+ 	 */
+ 
+-	if (!prepare_bootsect_setup())
++	if (!prepare_bootsect_setup(cmdline))
+ 		return PXENV_STATUS_FAILURE;
+ 
+ 	/*
+diff -ur pxe-linux.orig/nbp.linux/menu.c pxe-linux/nbp.linux/menu.c
+diff -ur pxe-linux.orig/nbp.linux/nbp.h pxe-linux/nbp.linux/nbp.h
+--- pxe-linux/nbp.linux/nbp.h	Thu Sep 23 20:58:21 1999
++++ pxe-linux/nbp.linux/nbp.h	Sun Sep 26 04:00:23 1999
+@@ -70,7 +70,7 @@
+ 
+ int do_restart();
+ 
+-int prepare_bootsect_setup();
++int prepare_bootsect_setup(char * cmdline);
+ 
+ int unload_pxe();
+ 
+diff -ur pxe-linux.orig/nbp.linux/prepare.c pxe-linux/nbp.linux/prepare.c
+--- pxe-linux/nbp.linux/prepare.c	Thu Sep 23 20:58:21 1999
++++ pxe-linux/nbp.linux/prepare.c	Sun Sep 26 04:02:47 1999
+@@ -63,7 +63,7 @@
+ 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+ int
+-prepare_bootsect_setup()
++prepare_bootsect_setup(char * cmdline)
+ {
+ 	BOOTSECT bootsect;
+ 	SETUP setup;
+@@ -208,6 +208,10 @@
+ 	/*
+ 	 * Initialize boot device for initrd, if necessary.
+ 	 */
++
++	bootsect.cmdline_magic = 0xA33F;
++	bootsect.cmdline_offset = 36;
++	strcpy(bootsect.reserved2, cmdline);
+ 	
+ 	if (initrd_addr && initrd_size) {
+ 		/*

@@ -1,0 +1,24 @@
+--- pxe.cc	2004-09-14 12:38:34.290402879 +0200
++++ pxe.cc.new	2004-09-14 12:39:01.188937196 +0200
+@@ -219,6 +219,10 @@
+ 	int _debug, c, errflg;
+ 	const char *configfile=PXECONFIGFILE;
+ 	std::fstream debug;
++	// Save buffers of stdin/stderr/stdout
++	std::streambuf *out_buffer = std::cout.rdbuf();
++	std::streambuf *err_buffer = std::cerr.rdbuf();
++	std::streambuf *in_buffer = std::cin.rdbuf();
+ 
+ 	errflg = _debug = 0;
+ 	// get the command line opts
+@@ -330,6 +332,9 @@
+ 	} else { // debug
+ 		StartPxeService(configfile);
+ 	}
+-	
++	// Restore stdout/stderr/stdin to avoid a segfault
++	std::cout.rdbuf(out_buffer);
++	std::cerr.rdbuf(err_buffer);
++	std::cin.rdbuf(in_buffer);
+ 	return(0);
+ }

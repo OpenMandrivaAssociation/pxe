@@ -1,0 +1,11 @@
+--- ./options.cc.arch_id	2003-02-02 14:24:29.000000000 +0100
++++ ./options.cc	2007-10-10 18:11:40.000000000 +0200
+@@ -640,7 +640,7 @@ Options::MakeFilename(int menu_id, int a
+ 		return(NULL);
+ 
+ 	// search for the arch name
+-	for(i=0; i != CSA_types[i].arch_id; i++);
++	for(i=0; arch_id != CSA_types[i].arch_id; i++);
+ 	tmpc = new char[strlen(CSA_types[i].arch_name) +
+ 	  (strlen(serv_ptr->filebase)*2) + 8];
+ 	sprintf(tmpc, "%s/%s/%s.%d", CSA_types[i].arch_name,
