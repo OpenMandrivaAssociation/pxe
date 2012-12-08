@@ -1,0 +1,101 @@
+#!/bin/bash
+#
+# Startup script handle the initialisation of PXE daemon
+#
+# chkconfig: 345 80 54
+#
+# description: A Preboot Execution Environment (PXE) Server.  This 
+# server will allow you to network boot other PXE based machines.
+#
+# Script Authors: Erwan Velu <erwan@mandrakesoft.com>
+#		  Antoine Ginies <aginies@mandrakesoft.com>
+#
+# Based on init script for pxe of Intel
+#
+#
+# config: /etc/pxe.conf
+#
+### BEGIN INIT INFO
+# Provides: pxe
+# Required-Start: dhcpd
+# Required-Stop: dhcpd
+# Default-Start: 3 4 5
+# Short-Description: PXE daemon
+# Description: A Preboot Execution Environment (PXE) Server. This server
+#              will allow you to network boot other PXE based machines.
+### END INIT INFO
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+PXE_CONF=/etc/pxe.conf
+PXE_BIN=/usr/sbin/pxe
+PXE_PID=/tmp/pxe.pid
+LOCKFILE=/var/lock/subsys/pxe
+
+RETVAL=0
+#
+#	See how we were called.
+#
+case "$1" in
+  start)
+	if [ "$(pidof dhcpd)" = "" ]; then
+                gprintf "Dhcp server is not running on this machine !\n"
+		gprintf "Be sure that a valid PXE Dhcp server is running on your network\n"
+        fi
+
+  	if [ ! -f ${PXE_CONF} ]; then
+	        gprintf "${PXE_CONF} is not present !\n"
+	        exit -1
+	fi
+
+	if [ ! -x ${PXE_BIN} ]; then
+	        gprintf "${PXE_BIN} is not executable !\n"
+	        exit -1
+	fi
+
+	# Looking for interface used for pxe service
+	INTERFACE=$(grep "interface=" ${PXE_CONF} | cut -d "=" -f 2);
+
+	# Check if pxe is already running
+	if [ "$(pidof pxe)" = "" ]; then
+		rm -rf $LOCKFILE
+		rm -rf $PXE_PID
+	    	route add -host 255.255.255.255 $INTERFACE 1>/dev/null 2>/dev/null
+	    	route add -net 224.0.0.0 netmask 224.0.0.0 $INTERFACE 1>/dev/null 2>/dev/null
+	    	echo -n 'Starting PXE server'
+	    	daemon ${PXE_BIN} -c ${PXE_CONF}
+	    	RETVAL=$?
+	    	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/pxe
+	    	echo
+	else	   
+	    	echo -n 'PXE server already started !'
+	    	echo 
+	fi
+	;;
+  stop)
+	#action "Stopping pxe daemon: " 
+	route del 255.255.255.255 2>/dev/null
+	route del -net 224.0.0.0/3 2>/dev/null
+	echo -n 'Stopping PXE server'
+	killproc ${PXE_BIN}
+	rm -f ${PXE_PID}
+	RETVAL=$?
+	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/pxe
+	echo
+	;;
+  reload|restart)
+	$0 stop
+	$0 start
+	RETVAL=$?
+	;;
+  status)
+	status ${PXE_BIN}
+	RETVAL=$?
+	;;
+  *)
+	gprintf "Usage: /etc/rc.d/init.d/pxe {start|stop|restart|reload|status}\n"
+	exit 1
+esac
+
+exit $RETVAL
