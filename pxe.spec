@@ -4,7 +4,7 @@ Summary:	A Linux PXE (Preboot eXecution Environment) package
 Name:		pxe
 Group:		System/Servers
 Version:	1.4.2
-Release:	25
+Release:	26
 License:	GPLv2
 Url:		http://www.kano.org.uk/projects/pxe
 Source0:	http://www.kano.org.uk/projects/pxe/%{name}-%{version}.tar.gz
