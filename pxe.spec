@@ -7,7 +7,7 @@ Name:           %{name}
 Summary:        A Linux PXE (Preboot eXecution Environment) package
 Group:          System/Servers
 Version:        %{version}
-Release:        %mkrel 22
+Release:        23
 License:        GPL
 URL: 		http://www.kano.org.uk/projects/pxe
 Requires:       chkconfig, dhcp-server, coreutils, grep, tftp-server, pxelinux
