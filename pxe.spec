@@ -6,7 +6,7 @@ Group:		System/Servers
 Version:	1.4.2
 Release:	32
 License:	GPLv2
-Url:		http://www.kano.org.uk/projects/pxe
+Url:		https://www.kano.org.uk/projects/pxe
 Source0:	http://www.kano.org.uk/projects/pxe/%{name}-%{version}.tar.gz
 Source1:	pxe
 Source2:	pxe.conf
