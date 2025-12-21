@@ -36,6 +36,11 @@ Provides:	pxeserver
 Summary:	A compilation of Linux PXE (Preboot eXecution Environment) Bootstraps
 Group:		System/Servers
 %ifarch %{ix86}
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires:	dev86-devel
 %endif
 Requires:	syslinux >= 1.67
